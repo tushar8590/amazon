@@ -191,7 +191,9 @@ public class AmazonClient {
     	params.put(PARAM_VERSION, VERSION);
     	params.put(PARAM_ASSOCIATE_TAG, this.associateTag);
     	String u = helper.sign(params);
+    	System.out.println(u);
     	return getResource(u);
+    	
     }        
 
 	private InputStream getResource(String u) {

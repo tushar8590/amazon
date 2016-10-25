@@ -84,7 +84,7 @@ public class ItemLookupSample {
         
         final String accessKeyId = "AKIAIFWKPIPO5WHWWWAA";
         final String secretKey = "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";
-        final String associateTag = "affiliate-20";
+        final String associateTag = "aapcompare0f-21";
         
         /* The helper can sign requests in two forms - map form and string form */
         AmazonClient client = new AmazonClient(accessKeyId, secretKey, associateTag);
@@ -123,18 +123,25 @@ public class ItemLookupSample {
         	
         	final Map<String, String> params = new HashMap<String, String>(5);
     		params.put("MerchantId", "All");
-    		params.put("SearchIndex", "Smartphones");
-    		params.put("ResponseGroup", "Large");
-    		params.put("BrowseNode", "1805560031");
+    		params.put("SearchIndex", "Electronics");
+    		params.put("ResponseGroup", "ItemAttributes");
+    		params.put("BrowseNode", "1389401031");
+    		for(int i=1;i<=1;i++){
+    	//	params.put("ItemPage", Integer.toString(i));
+    		
     		params.put(AmazonClient.Op.PARAM_OPERATION, AmazonClient.OPERATION_ITEM_SEARCH);
     		try {
-				BufferedWriter write = new BufferedWriter(new FileWriter(new File("D:\\Src Code\\amd\\B.xml")));
+				BufferedWriter write = new BufferedWriter(new FileWriter(new File("C:\\src code\\"+Integer.toString(i)+".xml")));
 				write.write(client.get(params).getPrettyXml());
-			} catch (IOException e) {
+				System.out.println(client.get(params).getPrettyXml());
+				write.close();
+				Thread.sleep(5000);
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    		System.out.println(client.get(params).getPrettyXml());
+    		}
+    		//System.out.println(client.get(params).getPrettyXml());
     		System.out.println("------------------");
         }
         
