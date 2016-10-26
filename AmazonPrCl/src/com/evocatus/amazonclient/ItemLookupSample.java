@@ -82,9 +82,9 @@ public class ItemLookupSample {
 			throw new RuntimeException(e);
 		}*/
         
-        final String accessKeyId = "AKIAIFWKPIPO5WHWWWAA";
-        final String secretKey = "obNfhGF28XQzRBQhiD3WdUXpSo4NLjnOD+jDtUUW";
-        final String associateTag = "aapcompare0f-21";
+        final String accessKeyId = "<your access id>";
+        final String secretKey = "<your secret key>";
+        final String associateTag = "<your associate tag>";
         
         /* The helper can sign requests in two forms - map form and string form */
         AmazonClient client = new AmazonClient(accessKeyId, secretKey, associateTag);
