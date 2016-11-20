@@ -23,18 +23,15 @@ package com.evocatus.amazonclient;
 
 import static com.evocatus.amazonclient.AmazonClient.documentToString;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import com.ECS.client.jax.ItemAttributes;
-import com.ECS.client.jax.ItemSearchResponse;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 /*
  * This class shows how to make a simple authenticated ItemLookup call to the
@@ -69,108 +66,41 @@ public class ItemLookupSample {
      */
     //private static final String ITEM_ID = "0545010225";
 
-    public static void main(String[] args) {
+    public static String getPrice(String accessKeyId, String secretKey, String associateTag,String asin ) throws ParserConfigurationException, SAXException, IOException {
 
-        
-       /* Properties props;
-		try {
-			props = new Properties();
-			props.load(new FileReader(new File(args[0])));
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}*/
-        
-        final String accessKeyId = "<your access id>";
-        final String secretKey = "<your secret key>";
-        final String associateTag = "<your associate tag>";
-        
+       
+      
         /* The helper can sign requests in two forms - map form and string form */
         AmazonClient client = new AmazonClient(accessKeyId, secretKey, associateTag);
  
         /*
          * Here is an example in map form, where the request parameters are stored in a map.
          */
+       // File inputFile = new File("input.txt");
         
-        
-       /* {
-        	System.out.println("Map form example (lookup):");
+       
+        	
         	
 	        final Map<String, String> params = new HashMap<String, String>(3);
 	        params.put(AmazonClient.Op.PARAM_OPERATION, AmazonClient.OPERATION_ITEM_LOOKUP);
-	        params.put("ItemId", "B00D75AB6I");
-	        params.put("ResponseGroup", "Large");
+	        params.put("ItemId", asin);
+	        params.put("ResponseGroup", "Medium");
 	        
 	        System.out.println(documentToString(client.getXml(params)));
-	        System.out.println("------------------");
-        }*/
-        
-        /*
-        {
-        	System.out.println("Query String example (lookup):");
-        	
-        	final String queryString = "Service=AWSECommerceService&Version="+AmazonClient.VERSION+"&Operation=ItemLookup&ResponseGroup=Small&ItemId=" + "B00D75AB6I";
-	        
-        	System.out.println(documentToString(client.getXml(queryString)));
-	        System.out.println("------------------");
-        }
-        
-        */
-        
-        {
-        	System.out.println("Map form example (search):");
-        	
-        	final Map<String, String> params = new HashMap<String, String>(5);
-    		params.put("MerchantId", "All");
-    		params.put("SearchIndex", "Electronics");
-    		params.put("ResponseGroup", "ItemAttributes");
-    		params.put("BrowseNode", "1389401031");
-    		for(int i=1;i<=1;i++){
-    	//	params.put("ItemPage", Integer.toString(i));
-    		
-    		params.put(AmazonClient.Op.PARAM_OPERATION, AmazonClient.OPERATION_ITEM_SEARCH);
-    		try {
-				BufferedWriter write = new BufferedWriter(new FileWriter(new File("C:\\src code\\"+Integer.toString(i)+".xml")));
-				write.write(client.get(params).getPrettyXml());
-				System.out.println(client.get(params).getPrettyXml());
-				write.close();
-				Thread.sleep(5000);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    		}
-    		//System.out.println(client.get(params).getPrettyXml());
-    		System.out.println("------------------");
-        }
-        
-       /* {
-        	System.out.println("Map form example (search, predefined OP):");
-        	
-           	final Map<String, String> params = new HashMap<String, String>(4);
-    		params.put("MerchantId", "All");
-    		params.put("SearchIndex", "Grocery");
-    		params.put("ResponseGroup", "Large");
-    		params.put("BrowseNode", "16318401");
-  
-    		ItemSearchResponse r = client.search().execute(params);
-	        System.out.println("Total results: " + r.getItems().get(0).getTotalResults());
-	        ItemAttributes ia = r.getItems().get(0).getItem().get(0).getItemAttributes();
-	        System.out.println("EAN of first item: " + ia.getEAN());
-	        System.out.println("------------------");
-        }*/
-       
-    /*    {
-        	System.out.println("Map form example (similarity, predefined OP):");
-        	
-	        final Map<String, String> params = new HashMap<String, String>(2);
-	        params.put("ItemId", "B0014WYXYW");
-	        params.put("ResponseGroup", "Large");
-	        
-	        System.out.println(client.similarity().execute(params).getItems().size());
-	        System.out.println("------------------");
-        }*/
+	        //System.out.println("------------------");
+	       
+	        String regexString = Pattern.quote("<FormattedPrice>") + "(.*?)" + Pattern.quote("</FormattedPrice>");
+	        Pattern pattern = Pattern.compile(regexString);
+	        Matcher matcher = pattern.matcher(documentToString(client.getXml(params)));
+	        String price = "";
+	        while (matcher.find()) {
+	        	  String c = matcher.group(1); // Since (.*?) is capturing group 1
+	        	  // You can insert match into a List/Collection here
+	        	  price = c;
+	        	  break;
+	        	}
+	      return price;
+	    
     }
     
 
