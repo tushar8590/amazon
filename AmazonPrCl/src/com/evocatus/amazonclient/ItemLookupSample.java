@@ -86,10 +86,10 @@ public class ItemLookupSample {
 	        params.put("ItemId", asin);
 	        params.put("ResponseGroup", "Medium");
 	        
-	        System.out.println(documentToString(client.getXml(params)));
+	       // System.out.println(documentToString(client.getXml(params)));
 	        //System.out.println("------------------");
 	       
-	        String regexString = Pattern.quote("<FormattedPrice>") + "(.*?)" + Pattern.quote("</FormattedPrice>");
+	        String regexString = Pattern.quote("<LowestNewPrice>") + "(.*?)" + Pattern.quote("</LowestNewPrice>");
 	        Pattern pattern = Pattern.compile(regexString);
 	        Matcher matcher = pattern.matcher(documentToString(client.getXml(params)));
 	        String price = "";
@@ -99,6 +99,18 @@ public class ItemLookupSample {
 	        	  price = c;
 	        	  break;
 	        	}
+	        if("".equals(price))
+	        {
+	        	regexString = Pattern.quote("<LowestNewPrice>") + "(.*?)" + Pattern.quote("</LowestNewPrice>");
+	        	 pattern = Pattern.compile(regexString);
+	        	 matcher = pattern.matcher(documentToString(client.getXml(params)));
+	        	  while (matcher.find()) {
+		        	  String c = matcher.group(1); // Since (.*?) is capturing group 1
+		        	  // You can insert match into a List/Collection here
+		        	  price = c;
+		        	  break;
+		        	}
+	        }
 	      return price;
 	    
     }
